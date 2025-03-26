@@ -4,15 +4,13 @@ module.exports = {
 			// https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
 		}
   },
-  devServer: {
-    proxy: {
-      '/api': {
-        target: 'https://login.affluentco.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
-      }
-    }
-  }
+  // devServer: {
+  //   proxy: {
+  //     '/api': {
+  //       target: 'https://login.affluentco.com',
+  //       changeOrigin: true,
+  //       ws: true
+  //     }
+  //   }
+  // }
 }
