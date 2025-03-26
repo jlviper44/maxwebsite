@@ -6,7 +6,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "maxwebsite",
 	"compatibility_date": "2025-03-21",
-	"main": "server/index.ts",
+	"main": "server/index.js",
 	"assets": {
 		"not_found_handling": "single-page-application",
 		"binding": "ASSETS"
