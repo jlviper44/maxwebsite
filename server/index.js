@@ -17,24 +17,25 @@ export default {
       return response;
 		}
 
-    // if(url.pathname.startsWith("/kvs"))
-    // {
-    //   let value = await env.KeyValues.get("safety");
-
-    //   // Return the value, as is, for the Response
-    //   return new Response(value);
-    // }
-
-    if(url.pathname.startsWith("/sql"))
+    if(url.pathname.startsWith("/kvs"))
     {
-      const { results } = await env.DB.prepare(
-        "SELECT * FROM Campaigns"
-      )
-        .all();
-      return new Response(JSON.stringify(results), {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      let value = await env.KeyValues.get("safety");
+
+      // Return the value, as is, for the Response
+      return new Response(value);
     }
+
+    // if(url.pathname.startsWith("/sql"))
+    // {
+    //   // const db = await mf.getD1Database("DB");
+    //   // const { results } = await db.prepare(
+    //   //   "SELECT * FROM Campaigns"
+    //   // )
+    //   //   .all();
+    //   return new Response(JSON.stringify("{}"), {
+    //     headers: { 'Content-Type': 'application/json' }
+    //   });
+    // }
 
 		return env.ASSETS.fetch(request);
 	},
