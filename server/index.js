@@ -8,9 +8,11 @@ export default {
 			});
 		}
 
-    if(url.pathname.startsWith("/kvs")) {
-      let value = await env.KeyValues.get("campaigns");
-      return new Response(value);
+    if(url.pathname.startsWith("/db")) {
+      const result = await env.DB.prepare(
+        "SELECT * FROM Campaigns",
+        ).run();
+        return Response(result);
     }
 
 		return env.ASSETS.fetch(request);
