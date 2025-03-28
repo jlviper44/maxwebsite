@@ -29,18 +29,18 @@
 	 */
    "d1_databases": [
     {
-      "binding": "DB",
+      "binding": "database",
       "database_name": "database",
       "database_id": "29a7245d-6451-4422-a7c0-baae5abd4e96",
-      "preview_database_id": "DB"
+      "preview_database_id": "database"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KeyValues",
+      "id": "27b70c84be9646f7bb3a6322c6586565"
     }
   ]
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "KeyValues",
-  //     "id": "kvs"
-  //   }
-  // ]
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

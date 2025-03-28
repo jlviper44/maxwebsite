@@ -7,9 +7,13 @@ export default {
 				name: "Cloudflare",
 			});
 		}
+    if(url.pathname.startsWith("/kvs")) {
+      const value = await env.KeyValues.get("campaigns");
+      return new Response(value);
+    }
 
     if(url.pathname.startsWith("/db")) {
-      const result = await env.DB.prepare(
+      const result = await env.database.prepare(
         "SELECT * FROM Campaigns",
         ).run();
         return Response(result);
