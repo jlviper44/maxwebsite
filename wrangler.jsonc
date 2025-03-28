@@ -29,7 +29,7 @@
    "kv_namespaces": [
     {
       "binding": "KeyValues",
-      "id": "kvs"
+      "id": "KeyValues"
     }
    ],
   //  "d1_databases": [
