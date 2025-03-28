@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "newweb",
+	"name": "maxwebsite",
 	"compatibility_date": "2025-03-27",
 	"main": "server/index.js",
 	"assets": {
