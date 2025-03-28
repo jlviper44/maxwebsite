@@ -4,8 +4,8 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "maxwebsite",
-	"compatibility_date": "2025-03-21",
+	"name": "newweb",
+	"compatibility_date": "2025-03-27",
 	"main": "server/index.js",
 	"assets": {
 		"not_found_handling": "single-page-application",
@@ -26,28 +26,12 @@
 	 * databases, object storage, AI inference, real-time communication and more.
 	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
 	 */
-   "kv_namespaces": [
+  "kv_namespaces": [
     {
       "binding": "KeyValues",
-      "id": "KeyValues"
+      "id": "kvs"
     }
-   ],
-  //  "d1_databases": [
-  //   {
-  //     "binding": "DB",
-  //     "database_name": "database",
-  //     "database_id": "29a7245d-6451-4422-a7c0-baae5abd4e96"
-  //   }
-  // ]
-  // {
-  //   "name": "Worker",
-  //   "kv_namespaces": [
-  //     {
-  //       "binding": "KeyValues",
-  //       "id": "kvs"
-  //     }
-  //   ]
-  // }
+  ]
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

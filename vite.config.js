@@ -8,15 +8,6 @@ import { cloudflare } from "@cloudflare/vite-plugin"
 
 // https://vite.dev/config/
 export default defineConfig({
-  // server: {
-  //   proxy: {
-  //     '/api': {
-  //       target: 'https://login.affluentco.com',
-  //       changeOrigin: true,
-  //       rewrite: (path) => path.replace(/^\/api/, ''),
-  //     },
-  //   }
-  // },
 	plugins: [
 		vue(),
 		vueDevTools(),
@@ -24,7 +15,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'@': fileURLToPath(new URL('./src', import.meta.url)),
+			'@': fileURLToPath(new URL('./src', import.meta.url))
 		},
 	},
 })
