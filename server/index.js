@@ -3,7 +3,7 @@ export default {
 		const url = new URL(request.url);
 
 		if (url.pathname.startsWith("/api/")) {
-      const apiUrl = "https://login.affluentco.com/affiliates/api/Reports/CampaignSummary?start_date=03%2F01%2F2025&end_date=03%2F25%2F2025&conversion_type=all&start_at_row=1&row_limit=30&api_key=hFct58Jru5Y5cPlP8VGq8Q&affiliate_id=207744";
+      const apiUrl = "https://login.affluentco.com/affiliates/api/Reports/Conversions?start_date=2025-03-24&end_date=2025-03-26&start_at_row=1&row_limit=3000&api_key=hFct58Jru5Y5cPlP8VGq8Q&affiliate_id=207744";
       let response = await fetch(apiUrl, request);
 
       // Recreate the response so you can modify the headers.
@@ -16,6 +16,25 @@ export default {
 
       return response;
 		}
+
+    // if(url.pathname.startsWith("/kvs"))
+    // {
+    //   let value = await env.KeyValues.get("safety");
+
+    //   // Return the value, as is, for the Response
+    //   return new Response(value);
+    // }
+
+    if(url.pathname.startsWith("/sql"))
+    {
+      const { results } = await env.DB.prepare(
+        "SELECT * FROM Campaigns"
+      )
+        .all();
+      return new Response(JSON.stringify(results), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
 		return env.ASSETS.fetch(request);
 	},
