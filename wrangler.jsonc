@@ -35,9 +35,10 @@
   //  ],
    "d1_databases": [
     {
-      "binding": "DB",
+      "binding": "database",
       "database_name": "database",
-      "database_id": "29a7245d-6451-4422-a7c0-baae5abd4e96"
+      "database_id": "29a7245d-6451-4422-a7c0-baae5abd4e96",
+      "preview_database_id": "database"
     }
   ]
   // {

@@ -20,7 +20,7 @@ export default {
 
     if(url.pathname.startsWith("/sql"))
     {
-      const { results } = await env.DB.prepare(
+      const { results } = await env.database.prepare(
         "SELECT * FROM Campaigns"
       )
         .all();
