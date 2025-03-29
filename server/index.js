@@ -17,13 +17,6 @@ export default {
       return response;
 		}
 
-    // if(url.pathname.startsWith("/kvs"))
-    // {
-    //   let value = await env.KeyValues.get("safety");
-
-    //   // Return the value, as is, for the Response
-    //   return new Response(value);
-    // }
 
     if(url.pathname.startsWith("/sql"))
     {
