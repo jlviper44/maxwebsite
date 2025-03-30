@@ -116,10 +116,9 @@ export default defineComponent({
       );
       var responseData = request.data.data;
       responseData.forEach((item) => {
-        item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
+        item["click_date"] = this.FormatDateTime(item["click_date"]);
       })
 
-      console.log(request.data);
       this.Clicks.Data = request.data.data;
       this.Clicks.DataLoading = false;
     },
@@ -140,7 +139,6 @@ export default defineComponent({
         item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
       })
 
-      console.log(request.data);
       this.Conversions.Data = request.data.data;
       this.Conversions.DataLoading = false;
     },
