@@ -9,10 +9,10 @@ export default {
   async HandleRequest(request, env)
   {
     const url = new URL(request.url);
-    if(url.pathname == "/Fluent/get/ConversionReports")
-    {
+    if(url.pathname == "/Fluent/get/Reports/Conversions")
       return this.GetConversionReports(request, env);
-    }
+    if(url.pathname == "/Fluent/get/Reports/Clicks")
+      return this.GetClicksReports(request, env);
 
     return HelperFunctions.CreateResponse(
       false,
@@ -20,46 +20,99 @@ export default {
       []
     );
   },
+  GetStartAndEndDateFromBody(reqBody)
+  {
+    if(!reqBody.hasOwnProperty('start_date'))
+    {
+      return "Error: Missing start_date in body!";
+    }
+    if(!reqBody.hasOwnProperty('end_date'))
+    {
+      return "Error: Missing end_date in body!";
+    }
+
+    return  "start_date=" + encodeURIComponent(HelperFunctions.FormatDateTime(reqBody["start_date"])) +
+            "&end_date="  + encodeURIComponent(HelperFunctions.FormatDateTime(reqBody["end_date"]));
+  },
+
+  GetFieldsFromBody(reqBody)
+  {
+    if(!reqBody.hasOwnProperty('fields'))
+    {
+      return "";
+    }
+    if(!Array.isArray(reqBody["fields"]))
+    {
+      return "";
+    }
+    var string = "";
+    reqBody["fields"].forEach((field) => {
+      string += "&fields="+field;
+    });
+    return string;
+  },
+
+  GetAPIKeyAndAffiliateID()
+  {
+    return "&api_key="+API_KEY+"&affiliate_id="+AFFILIATE_ID;
+  },
 
   async GetConversionReports(request, env)
   {
     const reqBody = await request.json();
-
+    console.log(reqBody);
     var apiUrl = BASE_URL + "/Reports/Conversions?";
     
-    if(!"start_date" in reqBody)
-    {
+    const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
+    if(startAndEndDate.includes("Error"))
       return HelperFunctions.CreateResponse(
         false,
-        "Error: Missing start_date in body!",
+        startAndEndDate,
         []
       );
-    }
-    if(!"end_date" in reqBody)
-    {
-      return HelperFunctions.CreateResponse(
-        false,
-        "Error: Missing start_date in body!",
-        []
-      );
-    }
-    apiUrl +=
-      "start_date=" + encodeURIComponent(HelperFunctions.FormatDateTime(reqBody["start_date"])) +
-      "&end_date="  + encodeURIComponent(HelperFunctions.FormatDateTime(reqBody["end_date"]))
+    
+    apiUrl += startAndEndDate;
 
-
-    apiUrl += "&start_at_row=1&row_limit=3000&api_key=hFct58Jru5Y5cPlP8VGq8Q&affiliate_id=207744";
-    
-    
-    
-    
+    apiUrl += "&start_at_row=1&row_limit=3000";
+    apiUrl += this.GetFieldsFromBody(reqBody);
+    apiUrl += this.GetAPIKeyAndAffiliateID();
     
     let response = await fetch(apiUrl, {});
     let t = await response.json();
 
     return HelperFunctions.CreateResponse(
       true,
-      "Good Request!",
+      "Success",
+      t["data"]
+    );
+  },
+
+  async GetClicksReports(request, env)
+  {
+    const reqBody = await request.json();
+    console.log(reqBody);
+    var apiUrl = BASE_URL + "/Reports/Clicks?";
+    
+    const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
+    if(startAndEndDate.includes("Error"))
+      return HelperFunctions.CreateResponse(
+        false,
+        startAndEndDate,
+        []
+      );
+    
+    apiUrl += startAndEndDate;
+
+    apiUrl += "&start_at_row=1&row_limit=3000";
+    apiUrl += this.GetFieldsFromBody(reqBody);
+    apiUrl += this.GetAPIKeyAndAffiliateID();
+    
+    let response = await fetch(apiUrl, {});
+    let t = await response.json();
+
+    return HelperFunctions.CreateResponse(
+      true,
+      "Success",
       t["data"]
     );
   }

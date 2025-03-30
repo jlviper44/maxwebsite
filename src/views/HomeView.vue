@@ -1,19 +1,5 @@
 <template>
   <div id="wrapper">
-    <!-- <div class="d-flex" id="searchBar">
-      <span>Start Date: </span>
-      <div class="datePickerDiv">
-        <VueDatePicker v-model="StartDate" vertical />
-      </div>
-      
-      <span>Start Date: </span>
-      <div class="datePickerDiv">
-        <VueDatePicker v-model="EndDate" vertical />
-      </div>
-      <v-btn size="small" background-color="primary">Edit</v-btn>
-    </div>
-     -->
-    <!-- <center> -->
     <div class="search-container">
       <h2>Search</h2>
       <VueDatePicker v-model="StartDate" vertical />
@@ -22,11 +8,48 @@
       <div id="result"></div>
     </div>
     <!-- </center> -->
-    <v-data-table 
+    <!-- <v-data-table 
       :items="Data"
+      :headers="Headers"
       :loading="DataLoading"
     >
-    </v-data-table>
+    </v-data-table> -->
+    <v-card>
+      <v-tabs
+        v-model="Tab"
+        bg-color="primary"
+      >
+        <v-tab value="graph">Graph</v-tab>
+        <v-tab value="conversion">Conversion Data</v-tab>
+        <v-tab value="click">Click Data</v-tab>
+      </v-tabs>
+
+      <v-card-text>
+        <v-tabs-window v-model="Tab">
+          <v-tabs-window-item value="graph">
+            One
+          </v-tabs-window-item>
+
+          <v-tabs-window-item value="conversion">
+            <v-data-table 
+              :items  ="Conversions.Data"
+              :headers="Conversions.Headers"
+              :loading="Conversions.DataLoading"
+            >
+            </v-data-table>
+          </v-tabs-window-item>
+
+          <v-tabs-window-item value="click">
+            <v-data-table 
+              :items  ="Clicks.Data"
+              :headers="Clicks.Headers"
+              :loading="Clicks.DataLoading"
+            >
+            </v-data-table>
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -45,31 +68,50 @@ export default defineComponent({
 
   data(){
     return {
-      // Headers: [
-      //   { title: 'Domain'         , align: 'start', key: 'Domain'     },
-      //   { title: 'Campaign Path'  , align: 'start', key: 'Path'       },
-      //   { title: 'User'           , align: 'start', key: 'User'       },
-      //   { title: 'WHForm'         , align: 'start', key: 'WHForm'     },
-      //   { title: 'Regions'        , align: 'start', key: 'Regions'    },
-      //   { title: 'SafetyForm'     , align: 'start', key: 'SafetyForm' },
-      //   { title: ''               , align: 'start', key: 'Edit'       },
-      // ],
-      Data:[],
-      DataLoading: false,
+      Tab: 1,
+      Conversions: {
+        Headers: [
+          { title: 'Date'         , align: 'start', key: 'conversion_date'},
+          { title: 'Offer Name'   , align: 'start', key: 'offer_name'     },
+          { title: 'Sub ID'       , align: 'start', key: 'subid_1'        },
+          { title: 'Price'        , align: 'start', key: 'price'          },
+        ],
+        Data:[],
+        DataLoading: false,
+      },
+      Clicks: {
+        Keys: ["click_date", "offer", "subid_1", "price", "ip_address"],
+        Headers: [
+          { title: 'Date'         , align: 'start', key: 'click_date'       },
+          { title: 'Offer Name'   , align: 'start', key: 'offer.offer_name' },
+          { title: 'Sub ID'       , align: 'start', key: 'subid_1'          },
+          { title: 'Price'        , align: 'start', key: 'price'            },
+          { title: 'IP Address'   , align: 'start', key: 'ip_address'       },
+        ],
+        Data:[],
+        DataLoading: false,
+      },
       StartDate: null,
       EndDate:   null,
     }
   },  
 
   methods: {
-    async getData()
+    getData()
     {
-      this.DataLoading = true;
-      this.Data = [];
-      var request = await axios.post("/Fluent/get/ConversionReports", 
+      this.getClicks();
+      this.getConversions();
+    },
+
+    async getClicks()
+    {
+      this.Clicks.DataLoading = true;
+      this.Clicks.Data = [];
+      var request = await axios.post("/Fluent/get/Reports/Clicks", 
         {
           start_date: this.StartDate,
-          end_date:   this.EndDate
+          end_date:   this.EndDate,
+          fields:     this.Clicks.Keys
         }
       );
       var responseData = request.data.data;
@@ -77,8 +119,30 @@ export default defineComponent({
         item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
       })
 
-      this.Data = request.data.data;
-      this.DataLoading = false;
+      console.log(request.data);
+      this.Clicks.Data = request.data.data;
+      this.Clicks.DataLoading = false;
+    },
+
+    async getConversions()
+    {
+      this.Conversions.DataLoading = true;
+      this.Conversions.Data = [];
+      var request = await axios.post("/Fluent/get/Reports/Conversions", 
+        {
+          start_date: this.StartDate,
+          end_date:   this.EndDate,
+          fields:     this.Conversions.Headers.map(x=>x.key)
+        }
+      );
+      var responseData = request.data.data;
+      responseData.forEach((item) => {
+        item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
+      })
+
+      console.log(request.data);
+      this.Conversions.Data = request.data.data;
+      this.Conversions.DataLoading = false;
     },
     FormatDateTime(dateString) {
       const date = new Date(dateString);
@@ -119,6 +183,10 @@ body {
   justify-content: center;
   align-items: center; */
 }
+#wrapper {
+  margin: 10px;
+}
+
 .search-container {
   margin:auto;
   margin-top: 20px;
