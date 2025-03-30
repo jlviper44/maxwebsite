@@ -1,0 +1,119 @@
+App PROMPT:
+
+1. Homepage / Landing Page
+
+Homepage should autodetect user's location and provide data based on location. Should also allow them to change the location manually.
+
+- Purpose: Entry point to the app, provides an overview and quick access to core features.
+- Key Features:
+    - Prominent Search Bar: For quick keyword or business name searches.
+    - Category Browsing:
+        - Visually appealing display of business categories (icons or images).
+        - Easy navigation to browse businesses by type (e.g., Restaurants, Shops, Services).
+    - "Discover Businesses Near You" Section (Optional):
+        - Prompt to enable location services to show nearby Assyrian businesses.
+        - Potentially a small map snippet or a carousel of nearby businesses.
+    - App Introduction/Welcome Message:
+        - Briefly explain the purpose of the app and its benefits to users.
+    - Featured Businesses 
+        - Section to highlight newly added or promoted businesses (if monetization is considered in the future).
+    - Call to Action (e.g., "Start Exploring," "Find Assyrian Businesses")
+    - Navigation Links: To other key pages (Map, Categories, About Us).
+
+2. Business Listing Page
+- Purpose: Displays detailed information for a specific Assyrian business.
+- Key Features:
+    - Business Name and Logo/Images: Prominently displayed.
+    - Business Category: Clearly indicated.
+    - Detailed Business Description: Rich text area to describe services, products, history, etc.
+    - Contact Information:
+        - Phone Number (clickable to call on mobile).
+        - Email Address (clickable to email).
+        - Website Link (clickable).
+        - Social Media Links (icons linking to business profiles).
+    - Address and Map Location:
+        - Full address displayed clearly.
+        - Embedded interactive map showing the business location (using Google Maps API).
+        - "Get Directions" link (using Google Maps).
+    - Photo Gallery/Carousel: Display multiple images of the business, products, or services.
+    - Languages Supported/Spoken: List of languages used by the business.
+    - "Save Business" / "Add to Favorites" Button (Optional - Future User Account Feature): Allows users to save businesses for later access.
+    - "Share Business" Button: Option to share the business listing via social media or messaging apps.
+    - "Report a Problem" Link (Optional - for moderation/data quality): Users can report incorrect information.
+3. Business Category Page
+- Purpose: Displays a list of businesses belonging to a selected category.
+- Key Features:
+    - Category Title: Clearly indicates the selected business category (e.g., "Restaurants," "Shops").
+    - List of Businesses in Category: Displayed in a user-friendly format (cards, list view).
+    - Business Information Snippets: For each business in the list:
+        - Business Name
+        - Category
+        - Short Description (excerpt from business description).
+        - Image/Logo (thumbnail).
+        - Location (City/Region).
+    - Filtering and Sorting Options (Optional):
+        - "Filter by Location" (City, Region, or "Near Me").
+        - "Sort by" (e.g., Alphabetical, Newest, Most Relevant - relevance might be complex for initial version).
+    - "View on Map" Button (Optional): To switch to a map view showing all businesses in the current category.
+    - Pagination or Infinite Scrolling: For handling a large number of businesses in a category.
+4. Map Page
+- Purpose: Dedicated page for viewing businesses on an interactive map.
+- Key Features:
+    - Interactive Map: Full-screen map powered by 
+ and Google Maps
+    - Business Markers: Markers on the map indicating the location of each Assyrian business.
+        - Markers could be visually differentiated by category (using different icons or colors - Future Enhancement).
+        - Clickable markers to show a business preview/information popup.
+    - Map Controls: Standard Google Maps controls (zoom, pan, map type).
+    - "Search this Area" Functionality: Update business listings displayed based on the visible map area.
+    - Category Filter : Allow users to filter businesses shown on the map by category.
+    - "List View" Button: Option to switch back to a list view of businesses (perhaps showing businesses visible in the current map area).
+    - Geolocation "Find My Location" Button: Center the map on the user's current location (if location services are enabled).
+5. Search Results Page
+- Purpose: Displays the results of a user's search query.
+- Key Features:
+    - Search Query Display: Show the search term used by the user.
+    - List of Matching Businesses: Displayed in a similar format to the Category Page (business cards/list).
+    - Business Information Snippets: Similar to Category Page, providing key info for each result.
+    - "Refine Search" Option: Return to the search bar with the previous query pre-filled.
+    - Filtering Options (Optional): Filter search results by category, location, etc. (similar to Category Page filters).
+    - "View on Map" Button (Optional): To see search results displayed on a map.
+    - "No Results Found" Message: Clear message if the search yields no matches, with suggestions (e.g., try broader search terms, browse categories).
+6. About Us Page (Informational)
+- Purpose: Provides information about the app, its creators, and its mission.
+- Key Features:
+    - App Purpose and Mission Statement: Clearly state the goal of the Assyrian Business Directory.
+    - Background Information: Explain the context of the Assyrian diaspora and the need for this app.
+    - Contact Information (Optional): General contact email for inquiries.
+    - "Contribute Data" / "Suggest a Business" Section (Optional): Instructions on how users can contribute business listings (if community contributions are encouraged even before self-registration is live).
+7. Contact Us Page (Informational)
+- Purpose: Provides contact information for support or inquiries.
+- Key Features:
+    - Contact Email Address: Clearly displayed and clickable.
+    - Contact Form (Optional): A form for users to submit messages directly through the app.
+    - FAQ Section : Answers to frequently asked questions.
+8. Business Registration/Login & Business Profile Management Pages
+- Purpose: For Assyrian business owners to register, log in, and manage their business profiles.
+- Pages (Examples):
+    - Business Registration Page: Form for new business registration (collecting business details).
+    - Business Login Page: For registered business owners to access their profiles.
+    - Business Dashboard / Profile Management Page: For business owners to:
+        - Edit business details.
+        - Upload/manage photos.
+        - View profile statistics (future - if analytics are implemented).
+        - Manage profile visibility.
+9. (Backend - Admin Dashboard - Not User-Facing)
+- Purpose: For app administrators to manage data, users (if admin accounts), and app settings.
+- Features:
+    - Business Listing Management:
+        - View, Edit, Approve, Delete business listings.
+        - Search and filter business listings.
+    - Category Management:
+        - Add, Edit, Delete business categories.
+    - User Management (if admin/moderator accounts are implemented):
+        - Manage admin/moderator accounts.
+    - Data Analytics/Reporting (Future Feature):
+        - View app usage statistics, business listing data, etc.
+        - 
+    - For all translation needs, app wide, use 
+ Detect the users device language and translate all listings to that language
