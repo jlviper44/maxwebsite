@@ -24,6 +24,7 @@
     <!-- </center> -->
     <v-data-table 
       :items="Data"
+      :loading="DataLoading"
     >
     </v-data-table>
   </div>
@@ -54,6 +55,7 @@ export default defineComponent({
       //   { title: ''               , align: 'start', key: 'Edit'       },
       // ],
       Data:[],
+      DataLoading: false,
       StartDate: null,
       EndDate:   null,
     }
@@ -62,6 +64,8 @@ export default defineComponent({
   methods: {
     async getData()
     {
+      this.DataLoading = true;
+      this.Data = [];
       var request = await axios.post("/Fluent/get/ConversionReports", 
         {
           start_date: this.StartDate,
@@ -69,12 +73,12 @@ export default defineComponent({
         }
       );
       var responseData = request.data.data;
-      console.log(responseData)
       responseData.forEach((item) => {
         item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
       })
 
       this.Data = request.data.data;
+      this.DataLoading = false;
     },
     FormatDateTime(dateString) {
       const date = new Date(dateString);
