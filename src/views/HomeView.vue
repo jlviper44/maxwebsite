@@ -7,13 +7,7 @@
       <button @click="getData">Search</button>
       <div id="result"></div>
     </div>
-    <!-- </center> -->
-    <!-- <v-data-table 
-      :items="Data"
-      :headers="Headers"
-      :loading="DataLoading"
-    >
-    </v-data-table> -->
+
     <v-card>
       <v-tabs
         v-model="Tab"
@@ -27,7 +21,9 @@
       <v-card-text>
         <v-tabs-window v-model="Tab">
           <v-tabs-window-item value="graph">
-            One
+            <div class="chartDiv">
+              <line-chart :chartData="ChartData" :options="ChartOptions"/>
+            </div>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="conversion">
@@ -55,20 +51,25 @@
 
 <script>
 import { defineComponent } from 'vue';
+import { LineChart } from 'vue-chart-3';
+import { Chart, registerables } from "chart.js";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-
 import axios from 'axios';
+
+Chart.register(...registerables);
+
 export default defineComponent({
   name: 'HomeView',
 
   components: { 
-    VueDatePicker
+    VueDatePicker,
+    LineChart
   },
 
   data(){
     return {
-      Tab: 1,
+      Tab: 0,
       Conversions: {
         Headers: [
           { title: 'Date'         , align: 'start', key: 'conversion_date'},
@@ -93,6 +94,20 @@ export default defineComponent({
       },
       StartDate: null,
       EndDate:   null,
+      ChartData: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Conversions Price',
+            backgroundColor: '#f87979',
+            data: []
+          }
+        ]
+      },
+      ChartOptions: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
     }
   },  
 
@@ -135,13 +150,18 @@ export default defineComponent({
         }
       );
       var responseData = request.data.data;
+      responseData.sort((a, b) => new Date(a.conversion_date) - new Date(b.conversion_date));
+
       responseData.forEach((item) => {
         item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
+        this.ChartData.labels.push(item["conversion_date"]);
+        this.ChartData.datasets[0].data.push(item["price"]);
       })
 
       this.Conversions.Data = request.data.data;
       this.Conversions.DataLoading = false;
     },
+
     FormatDateTime(dateString) {
       const date = new Date(dateString);
 
@@ -210,6 +230,12 @@ button {
 }
 button:hover {
   background-color: #0056b3;
+}
+
+.chartDiv
+{
+  /* max-height: 100vh;
+  height: 100%; */
 }
 
 </style>

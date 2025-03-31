@@ -60,7 +60,6 @@ export default {
   async GetConversionReports(request, env)
   {
     const reqBody = await request.json();
-    console.log(reqBody);
     var apiUrl = BASE_URL + "/Reports/Conversions?";
     
     const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
@@ -90,7 +89,6 @@ export default {
   async GetClicksReports(request, env)
   {
     const reqBody = await request.json();
-    console.log(reqBody);
     var apiUrl = BASE_URL + "/Reports/Clicks?";
     
     const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
