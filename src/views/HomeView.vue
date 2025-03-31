@@ -4,7 +4,7 @@
       <h2>Search</h2>
       <VueDatePicker v-model="StartDate" vertical />
       <VueDatePicker v-model="EndDate" vertical />
-      <button @click="getData">Search</button>
+      <button @click="getDataForDay">Search</button>
       <div id="result"></div>
     </div>
 
@@ -22,7 +22,18 @@
         <v-tabs-window v-model="Tab">
           <v-tabs-window-item value="graph">
             <div class="chartDiv">
-              <line-chart :chartData="ChartData" :options="ChartOptions"/>
+              <v-progress-linear
+                v-if="IsDataLoading"
+                color="primary"
+                height="6"
+                indeterminate
+                rounded
+              ></v-progress-linear>
+              <line-chart 
+                :chartData="ChartData" 
+                :options="ChartOptions"
+                
+              />
             </div>
           </v-tabs-window-item>
 
@@ -101,26 +112,75 @@ export default defineComponent({
             label: 'Conversions Price',
             backgroundColor: '#f87979',
             data: []
+          },
+          {
+            label: 'Clicks',
+            backgroundColor: '#12b2e3',
+            data: []
           }
         ]
       },
       ChartOptions: {
         responsive: true,
-        maintainAspectRatio: false
-      }
+        maintainAspectRatio: false,
+        scales: {
+            
+          xAxes: {
+            title: {
+              display: true,
+              text: "Hours",
+              font: {
+                size: 15
+              }
+            }
+          }
+        },
+      },
+      IsDataLoading: false
     }
   },  
 
   methods: {
-    getData()
+    async getDataForDay()
     {
-      this.getClicks();
-      this.getConversions();
+      this.IsDataLoading = true;
+      this.ChartData.labels = [];
+      this.ChartData.datasets = [];
+
+      this.ChartData.datasets.push({
+        label: 'Conversions Price',
+        backgroundColor: '#f87979',
+        data: []
+      });
+
+      this.ChartData.datasets.push({
+        label: 'Clicks',
+        backgroundColor: '#12b2e3',
+        data: []
+      });
+
+      var clicksData = await this.getClicks();
+      var conversionsData = await this.getConversions();
+
+      this.Clicks.Data = clicksData;
+      this.Conversions.Data = conversionsData;
+      var conversionChartData = this.SingleDayFormatChartData(conversionsData, "conversion_date", "price");
+      var clickChartData      = this.SingleDayFormatChartData(clicksData     , "click_date",      "Count");
+
+      this.ChartData.labels = this.GetHoursInDay();
+      conversionChartData.forEach((item) => {
+        this.ChartData.datasets[0].data.push(item.data);
+      });
+
+      clickChartData.forEach((item) => {
+        this.ChartData.datasets[1].data.push(item.data);
+      });
+
+      this.IsDataLoading = false;
     },
 
     async getClicks()
     {
-      this.Clicks.DataLoading = true;
       this.Clicks.Data = [];
       var request = await axios.post("/Fluent/get/Reports/Clicks", 
         {
@@ -132,15 +192,14 @@ export default defineComponent({
       var responseData = request.data.data;
       responseData.forEach((item) => {
         item["click_date"] = this.FormatDateTime(item["click_date"]);
+        item["Count"] = 1;
       })
 
-      this.Clicks.Data = request.data.data;
-      this.Clicks.DataLoading = false;
+      return responseData;
     },
 
     async getConversions()
     {
-      this.Conversions.DataLoading = true;
       this.Conversions.Data = [];
       var request = await axios.post("/Fluent/get/Reports/Conversions", 
         {
@@ -150,16 +209,44 @@ export default defineComponent({
         }
       );
       var responseData = request.data.data;
-      responseData.sort((a, b) => new Date(a.conversion_date) - new Date(b.conversion_date));
-
+      
       responseData.forEach((item) => {
         item["conversion_date"] = this.FormatDateTime(item["conversion_date"]);
-        this.ChartData.labels.push(item["conversion_date"]);
-        this.ChartData.datasets[0].data.push(item["price"]);
       })
+      return responseData;
+    },
 
-      this.Conversions.Data = request.data.data;
-      this.Conversions.DataLoading = false;
+    GetHoursInDay()
+    {
+      var hours = [];
+      for(var i = 0; i < 24; i++)
+      {
+        hours.push(String(i).padStart(2, '0'));
+      }
+      return hours;
+    },
+
+    SingleDayFormatChartData(data, dateKey, dataKey)
+    {
+      var labels = {};
+      
+      this.GetHoursInDay().forEach((item) => {
+        labels[item] = 0.0;
+      });
+
+      data.forEach((item) => {
+        var label = item[dateKey].substring(11,13);
+        labels[label] += item[dataKey];
+      });
+      var finalData = [];
+
+      this.GetHoursInDay().forEach((item) => {
+        finalData.push({
+          label: item,
+          data: labels[item]
+        });
+      });
+      return finalData;
     },
 
     FormatDateTime(dateString) {
@@ -187,6 +274,7 @@ export default defineComponent({
     endOfDay.setHours(23, 59, 59, 999);
     this.EndDate = endOfDay;
     
+    this.getDataForDay();
   }
 });
 </script>
