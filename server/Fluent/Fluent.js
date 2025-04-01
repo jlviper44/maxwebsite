@@ -13,6 +13,8 @@ export default {
       return this.GetConversionReports(request, env);
     if(url.pathname == "/Fluent/get/Reports/Clicks")
       return this.GetClicksReports(request, env);
+    if(url.pathname == "/Fluent/get/Reports/SubAffiliateSummary")
+      return this.GetSubAffiliateSummary(request, env);
 
     return HelperFunctions.CreateResponse(
       false,
@@ -90,6 +92,35 @@ export default {
   {
     const reqBody = await request.json();
     var apiUrl = BASE_URL + "/Reports/Clicks?";
+    
+    const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
+    if(startAndEndDate.includes("Error"))
+      return HelperFunctions.CreateResponse(
+        false,
+        startAndEndDate,
+        []
+      );
+    
+    apiUrl += startAndEndDate;
+
+    apiUrl += "&start_at_row=1&row_limit=3000";
+    apiUrl += this.GetFieldsFromBody(reqBody);
+    apiUrl += this.GetAPIKeyAndAffiliateID();
+    
+    let response = await fetch(apiUrl, {});
+    let t = await response.json();
+
+    return HelperFunctions.CreateResponse(
+      true,
+      "Success",
+      t["data"]
+    );
+  },
+
+  async GetSubAffiliateSummary(request, env)
+  {
+    const reqBody = await request.json();
+    var apiUrl = BASE_URL + "/Reports/SubAffiliateSummary?";
     
     const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
     if(startAndEndDate.includes("Error"))

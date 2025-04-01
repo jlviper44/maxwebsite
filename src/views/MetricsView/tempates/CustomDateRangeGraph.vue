@@ -6,8 +6,6 @@
         bg-color="primary"
       >
         <v-tab value="graph">Graph</v-tab>
-        <v-tab value="conversion">Conversion Data</v-tab>
-        <v-tab value="click">Click Data</v-tab>
       </v-tabs>
 
       <v-card-text >
@@ -29,7 +27,7 @@
             </div>
           </v-tabs-window-item>
 
-          <v-tabs-window-item value="conversion">
+          <!-- <v-tabs-window-item value="conversion">
             <v-data-table 
               :items  ="Conversions.Data"
               :headers="Conversions.Headers"
@@ -45,7 +43,7 @@
               :loading="Clicks.DataLoading"
             >
             </v-data-table>
-          </v-tabs-window-item>
+          </v-tabs-window-item> -->
         </v-tabs-window>
       </v-card-text>
     </v-card>
@@ -57,21 +55,12 @@ import { defineComponent } from 'vue';
 import { LineChart } from 'vue-chart-3';
 import { Chart, registerables } from "chart.js";
 import '@vuepic/vue-datepicker/dist/main.css'
-import {
-  GetHoursInDay
-
-} from '../functions/functions';
-
-import {
-  SingleDayFormatChartData,
-  GetClickData,
-  GetConversionData,
-} from '../functions/SingleDayFunctions'
+import axios from 'axios';
 
 Chart.register(...registerables);
 
 export default defineComponent({
-  name: 'SingleDayGraph',
+  name: 'CustomDateRangeGraph',
 
   components: {
     LineChart
@@ -80,38 +69,33 @@ export default defineComponent({
   data(){
     return {
       Tab: 0,
-      Conversions: {
-        Headers: [
-          { title: 'Date'         , align: 'start', key: 'conversion_date'},
-          { title: 'Offer Name'   , align: 'start', key: 'offer_name'     },
-          { title: 'Sub ID'       , align: 'start', key: 'subid_1'        },
-          { title: 'Price'        , align: 'start', key: 'price'          },
-        ],
-        Data:[],
-        DataLoading: false,
-      },
-      Clicks: {
-        Keys: ["click_date", "offer", "subid_1", "price", "offer_name"],
-        Headers: [
-          { title: 'Date'         , align: 'start', key: 'click_date'       },
-          { title: 'Offer Name'   , align: 'start', key: 'offer.offer_name' },
-          { title: 'Sub ID'       , align: 'start', key: 'subid_1'          },
-          { title: 'Price'        , align: 'start', key: 'price'            },
-        ],
-        Data:[],
-        DataLoading: false,
-      },
+      UnformattedData: {},
+      
       ChartData: {
         labels: [],
         datasets: [
           {
             label: 'Conversions Price',
             backgroundColor: '#f87979',
+            borderColor: "#f87979",
             data: []
           },
           {
             label: 'Clicks',
             backgroundColor: '#12b2e3',
+            borderColor: "#12b2e3",
+            data: []
+          },
+          {
+            label: 'Revenue',
+            backgroundColor: '#43d143',
+            borderColor: "#43d143",
+            data: []
+          },
+          {
+            label: 'EPC',
+            backgroundColor: '#d18221',
+            borderColor: "#d18221",
             data: []
           }
         ]
@@ -124,7 +108,7 @@ export default defineComponent({
           xAxes: {
             title: {
               display: true,
-              text: "Hours (Military)",
+              text: "Hours",
               font: {
                 size: 15
               }
@@ -139,49 +123,47 @@ export default defineComponent({
   methods: {
     async GetData(startDate, endDate)
     {
-      this.IsDataLoading = true;
+      const differenceInMilliseconds = endDate - startDate;
+
+      const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+      const beginDate = startDate;
+
       this.ChartData.labels = [];
-      this.ChartData.datasets = [];
+      this.UnformattedData = {};
+      for(var i = 0; i < differenceInDays + 1; i++)
+      {
+        const currentDate = new Date(beginDate);
+        currentDate.setDate(currentDate.getDate() + i);
+        const currentStartDate = currentDate.setHours(0, 0, 0, 0);
+        const currentEndDate   = currentDate.setHours(23, 59, 59, 999);
 
-      this.ChartData.datasets.push({
-        label: 'Conversions Price',
-        backgroundColor: '#f87979',
-        data: []
-      });
+        // console.log(new Date(currentStartDate), new Date(currentEndDate));
+        var request = await axios.post("/Fluent/get/Reports/SubAffiliateSummary", 
+          {
+            start_date: currentStartDate,
+            end_date:   currentEndDate,
+            fields:     []
+          }
+        );
+        // console.log(currentDate, request.data.data);
+        const day = currentDate.getDate();
+        const month = currentDate.getMonth() + 1;
+        var dateLabel = String(month).padStart(2,"0") + "/" + String(day).padStart(2,"0");
+        this.ChartData.labels.push(dateLabel);
+        this.UnformattedData[dateLabel] = request.data.data;
+        const totalConversions = request.data.data.reduce((sum, item) => sum + item.conversions, 0);
+        const totalClicks = request.data.data.reduce((sum, item) => sum + item.clicks, 0);
+        const totalRevenue = request.data.data.reduce((sum, item) => sum + item.revenue, 0);
+        const totalEPC = request.data.data.reduce((sum, item) => sum + item.epc, 0);
 
-      this.ChartData.datasets.push({
-        label: 'Clicks',
-        backgroundColor: '#12b2e3',
-        data: []
-      });
-
-      var clicksData = await GetClickData(
-        startDate,
-        endDate,
-        this.Clicks.Keys
-      );
-      var conversionsData = await GetConversionData(
-        startDate,
-        endDate,
-        this.Conversions.Headers.map(x=>x.key)
-      );
-
-      this.Clicks.Data = clicksData;
-      this.Conversions.Data = conversionsData;
-      var conversionChartData = SingleDayFormatChartData(conversionsData, "conversion_date", "price");
-      var clickChartData      = SingleDayFormatChartData(clicksData     , "click_date",      "Count");
-
-      this.ChartData.labels = GetHoursInDay();
-      conversionChartData.forEach((item) => {
-        this.ChartData.datasets[0].data.push(item.data);
-      });
-
-      clickChartData.forEach((item) => {
-        this.ChartData.datasets[1].data.push(item.data);
-      });
-
-      this.IsDataLoading = false;
-    },
+        this.ChartData.datasets[0].data.push(totalConversions);
+        this.ChartData.datasets[1].data.push(totalClicks);
+        this.ChartData.datasets[2].data.push(totalRevenue);
+        this.ChartData.datasets[3].data.push(totalEPC);
+      }
+      
+    }
   },
 
   created()

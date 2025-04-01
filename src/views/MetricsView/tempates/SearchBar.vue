@@ -71,7 +71,7 @@ export default defineComponent({
         var startDate = new Date(this.CustomStartDate);
         startDate.setHours(0, 0, 0, 0);
         var endDate = new Date(this.CustomEndDate);
-        endDate.setHours(23, 59, 59, 999);
+        endDate.setHours(0, 0, 0, 0);
         return {
           StartDate: startDate,
           EndDate: endDate,
