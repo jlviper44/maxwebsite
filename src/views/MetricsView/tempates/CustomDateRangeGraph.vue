@@ -108,7 +108,7 @@ export default defineComponent({
           xAxes: {
             title: {
               display: true,
-              text: "Hours",
+              text: "Dates",
               font: {
                 size: 15
               }
