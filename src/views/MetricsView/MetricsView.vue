@@ -22,7 +22,7 @@
 <script>
 import { defineComponent } from 'vue';
 import '@vuepic/vue-datepicker/dist/main.css'
-
+import axios from 'axios';
 
 import SearchBar from './tempates/SearchBar.vue';
 import SingleDayGraph from './tempates/SingleDayGraph.vue';
@@ -49,19 +49,19 @@ export default defineComponent({
       this.Mode = options.Mode;
       if(options.Mode == "SingleDay")
       {
-        this.$refs.SingleDayGraphView.GetData(options.StartDate, options.EndDate);
+        this.$refs.SingleDayGraphView.GetData(options.StartDate, options.EndDate, options.APIName);
         return;
       }
       if(options.Mode == "CustomRange")
       {
-        this.$refs.CustomDateRangeGraphView.GetData(options.StartDate, options.EndDate);
+        this.$refs.CustomDateRangeGraphView.GetData(options.StartDate, options.EndDate, options.APIName);
         return;
       }
 
     },
   },
 
-  created()
+  async created()
   {
   }
 });

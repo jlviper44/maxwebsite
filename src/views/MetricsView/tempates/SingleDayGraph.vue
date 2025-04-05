@@ -137,7 +137,7 @@ export default defineComponent({
   },  
 
   methods: {
-    async GetData(startDate, endDate)
+    async GetData(startDate, endDate, apiName)
     {
       this.IsDataLoading = true;
       this.ChartData.labels = [];
@@ -158,12 +158,14 @@ export default defineComponent({
       var clicksData = await GetClickData(
         startDate,
         endDate,
-        this.Clicks.Keys
+        this.Clicks.Keys,
+        apiName
       );
       var conversionsData = await GetConversionData(
         startDate,
         endDate,
-        this.Conversions.Headers.map(x=>x.key)
+        this.Conversions.Headers.map(x=>x.key),
+        apiName
       );
 
       this.Clicks.Data = clicksData;

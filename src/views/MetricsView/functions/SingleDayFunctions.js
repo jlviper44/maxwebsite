@@ -26,10 +26,12 @@ export const SingleDayFormatChartData = (data, dateKey, dataKey) => {
 export const GetClickData = async(
   startDate,
   endDate,
-  fields
+  fields,
+  apiName
 ) => {
   var request = await axios.post("/Fluent/get/Reports/Clicks", 
     {
+      APIName: apiName,
       start_date: startDate,
       end_date:   endDate,
       fields:     fields
@@ -47,10 +49,12 @@ export const GetClickData = async(
 export const GetConversionData = async(
   startDate,
   endDate,
-  fields
+  fields,
+  apiName
 ) => {
   var request = await axios.post("/Fluent/get/Reports/Conversions", 
     {
+      APIName: apiName,
       start_date: startDate,
       end_date:   endDate,
       fields:     fields

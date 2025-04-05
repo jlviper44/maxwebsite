@@ -1,9 +1,7 @@
 import HelperFunctions from "../HelperFunctions";
+import { D1QB } from 'workers-qb'
 
 const BASE_URL      = "https://login.affluentco.com/affiliates/api";
-const API_KEY       = "hFct58Jru5Y5cPlP8VGq8Q";
-const AFFILIATE_ID  = "207744";
-
 
 export default {
   async HandleRequest(request, env)
@@ -54,9 +52,24 @@ export default {
     return string;
   },
 
-  GetAPIKeyAndAffiliateID()
+  async GetAPIKeyAndAffiliateID(env, APIName)
   {
-    return "&api_key="+API_KEY+"&affiliate_id="+AFFILIATE_ID;
+    const qb = new D1QB(env.database);
+    const APIs = await qb
+    .fetchAll({
+      tableName: 'FluentAPIs',
+      where: {
+        conditions: 'Name = ?',
+        params: APIName,
+      },
+    })
+    .execute();
+    if(APIs.results.length == 1)
+    {
+      return "&api_key="+APIs.results[0].API_KEY+"&affiliate_id="+APIs.results[0].AFFILIATE_ID;
+    }
+
+    return "";
   },
 
   async GetConversionReports(request, env)
@@ -76,7 +89,7 @@ export default {
 
     apiUrl += "&start_at_row=1&row_limit=3000";
     apiUrl += this.GetFieldsFromBody(reqBody);
-    apiUrl += this.GetAPIKeyAndAffiliateID();
+    apiUrl += await this.GetAPIKeyAndAffiliateID(env, reqBody.APIName);
     
     let response = await fetch(apiUrl, {});
     let t = await response.json();
@@ -105,7 +118,7 @@ export default {
 
     apiUrl += "&start_at_row=1&row_limit=3000";
     apiUrl += this.GetFieldsFromBody(reqBody);
-    apiUrl += this.GetAPIKeyAndAffiliateID();
+    apiUrl += await this.GetAPIKeyAndAffiliateID(env, reqBody.APIName);
     
     let response = await fetch(apiUrl, {});
     let t = await response.json();
@@ -134,7 +147,7 @@ export default {
 
     apiUrl += "&start_at_row=1&row_limit=3000";
     apiUrl += this.GetFieldsFromBody(reqBody);
-    apiUrl += this.GetAPIKeyAndAffiliateID();
+    apiUrl += await this.GetAPIKeyAndAffiliateID(env, reqBody.APIName);
     
     let response = await fetch(apiUrl, {});
     let t = await response.json();

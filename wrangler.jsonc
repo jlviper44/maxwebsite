@@ -36,9 +36,9 @@
    "d1_databases": [
     {
       "binding": "database",
-      "database_name": "database",
-      "database_id": "29a7245d-6451-4422-a7c0-baae5abd4e96",
-      "preview_database_id": "database"
+      "database_name": "sqldatabase",
+      "database_id": "f41f575f-e92f-4f14-83c4-3da9b1d70f41",
+      "preview_database_id": "sqldatabase"
     }
   ]
   // {

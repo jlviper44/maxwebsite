@@ -121,7 +121,7 @@ export default defineComponent({
   },  
 
   methods: {
-    async GetData(startDate, endDate)
+    async GetData(startDate, endDate, apiName)
     {
       const differenceInMilliseconds = endDate - startDate;
 
@@ -141,6 +141,7 @@ export default defineComponent({
         // console.log(new Date(currentStartDate), new Date(currentEndDate));
         var request = await axios.post("/Fluent/get/Reports/SubAffiliateSummary", 
           {
+            APIName: apiName,
             start_date: currentStartDate,
             end_date:   currentEndDate,
             fields:     []
