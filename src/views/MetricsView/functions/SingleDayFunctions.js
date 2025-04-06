@@ -60,6 +60,7 @@ export const GetConversionData = async(
       fields:     fields
     }
   );
+  console.log(request);
   var responseData = request.data.data;
   
   responseData.forEach((item) => {

@@ -68,7 +68,6 @@ export default {
     {
       return "&api_key="+APIs.results[0].API_KEY+"&affiliate_id="+APIs.results[0].AFFILIATE_ID;
     }
-
     return "";
   },
 
@@ -90,7 +89,6 @@ export default {
     apiUrl += "&start_at_row=1&row_limit=3000";
     apiUrl += this.GetFieldsFromBody(reqBody);
     apiUrl += await this.GetAPIKeyAndAffiliateID(env, reqBody.APIName);
-    
     let response = await fetch(apiUrl, {});
     let t = await response.json();
 
@@ -107,6 +105,8 @@ export default {
     var apiUrl = BASE_URL + "/Reports/Clicks?";
     
     const startAndEndDate = this.GetStartAndEndDateFromBody(reqBody);
+
+    console.log(startAndEndDate);
     if(startAndEndDate.includes("Error"))
       return HelperFunctions.CreateResponse(
         false,
